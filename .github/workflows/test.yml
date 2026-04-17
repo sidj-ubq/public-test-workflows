@@ -1,0 +1,11 @@
+name: Echo (resuable-workflows)
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  echo:
+    uses: ./.github/workflows/resuable.yml
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

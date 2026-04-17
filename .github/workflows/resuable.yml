@@ -1,0 +1,23 @@
+name: Echo (resuable-workflows)
+
+on:
+  workflow_call:
+    inputs:
+      message:
+        type: string
+        required: false
+        default: hello from .github/resuable-workflows
+  secrets:
+    NPM_TOKEN:
+      required: true
+
+jobs:
+  echo:
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - name: Echo message
+        run: echo "${{ inputs.message }}"
+      - name: Publish to NPM
+        run: |
+          echo "print length of NPM_TOKEN: ${#NPM_TOKEN}"
