@@ -60,6 +60,8 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
               issue_number: ${{ needs.run-when-command.outputs.number }},
               body: 'This PR orignates from a fork. Adding a review comment to check the approval worker',
             });
