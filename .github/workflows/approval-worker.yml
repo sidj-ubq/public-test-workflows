@@ -63,5 +63,10 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: ${{ needs.run-when-command.outputs.number }},
-              body: 'This PR orignates from a fork. Adding a review comment to check the approval worker',
+              body: [
+                '⚠️ **Warning:** This PR originates from a fork.',
+                '',
+                '_Adding this comment to run the approval worker._'
+              ].join('\n'),
+         
             });
