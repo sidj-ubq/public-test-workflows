@@ -70,3 +70,13 @@ jobs:
               ].join('\n'),
          
             });
+
+  approval-check-worker:
+    runs-on: ubuntu-latest
+    needs: run-when-command
+    if: not(github.event_name == 'pull_request_review' && needs.run-when-command.outputs.is_fork == 'true')
+    steps:
+      - name: Check approval
+        id: check-approval
+        runs: |
+          echo "this would run if not from a fork and pull request review event"
