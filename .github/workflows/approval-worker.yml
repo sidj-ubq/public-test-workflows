@@ -48,18 +48,25 @@ jobs:
             core.info(`PR #${prNumber} is_fork=${isFork}`); // debug log
             core.setOutput('is_fork', String(isFork));
 
-  upload-meta:
+  add-comment:
     runs-on: ubuntu-latest
     needs: run-when-command
+    if: needs.run-when-command.outputs.is_fork == 'true'
     steps:
-      - name: Write PR meta to file
-        run: |
-          mkdir -p /tmp/pr-meta
-          echo '{"pr_number": "${{ needs.run-when-command.outputs.number }}", "is_fork": "${{ needs.run-when-command.outputs.is_fork }}"}' > /tmp/pr-meta/meta.json
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Add comment on PR
+        id: add-comment
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # 8.0.0
         with:
-          name: pr-meta
-          path: /tmp/pr-meta/meta.json
-          retention-days: 1
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ needs.run-when-command.outputs.number }},
+              body: [
+                '⚠️ **Warning:** This PR originates from a fork.',
+                '',
+                '_Please write a comment on the PR for this to fork properly for fork repo PRs._'
+              ].join('\n'),
+         
+            });
