@@ -27,7 +27,7 @@ jobs:
         id: pr
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # 8.0.0
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.PAT_TOKEN }}
           script: |
             const prNumber = context.payload.issue?.number ?? context.payload.pull_request?.number;
             if (!prNumber) {
@@ -57,7 +57,7 @@ jobs:
         id: add-comment
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # 8.0.0
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.PAT_TOKEN }}
           script: |
             await github.rest.issues.createComment({
               owner: context.repo.owner,
