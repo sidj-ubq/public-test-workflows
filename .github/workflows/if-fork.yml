@@ -27,7 +27,7 @@ jobs:
           name: pr-meta
           path: /tmp/pr-meta
           run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ steps.app-token.outputs.token }}
 
       - name: Post comment
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
