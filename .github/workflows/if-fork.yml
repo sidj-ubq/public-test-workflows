@@ -1,0 +1,49 @@
+
+name: Post Fork Warning Comment
+
+on:
+  workflow_run:
+    workflows: ["Approval Check Worker"]
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  post-comment:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pr-meta
+          path: /tmp/pr-meta
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Post comment
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: |
+            const fs = require('fs');
+            const meta = JSON.parse(fs.readFileSync('/tmp/pr-meta/meta.json', 'utf8'));
+            if (meta.is_fork !== 'true') { core.info('Not a fork, skipping'); return; }
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: Number(meta.pr_number),
+              body: [
+                '⚠️ **Warning:** This PR originates from a fork.',
+                '',
+                '_Please write a comment on the PR for this to work properly for fork repo PRs._'
+              ].join('\n'),
+            });
