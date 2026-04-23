@@ -64,11 +64,11 @@ jobs:
                 '> This pull request originates from a **fork**, so the `pull_request_review` event cannot reliably drive the approval workflow.',
                 '',
                 '> [!CAUTION]',
-                '> The required **Approval Check Worker** status check has been intentionally failed, and this PR **cannot be merged** until it turns green.',
+                '> The required **Approval Check Worker** status check has been intentionally failed, and this PR **cannot be merged** until status check pass.',
                 '',
                 '### How to unblock this PR',
                 '',
-                'A reviewer with write access must post an **approval comment** on this PR. That will trigger the `issue_comment` event and re-run the approval worker, which will then pass and allow the merge.',
+                'Please write a comment on the PR, which will trigger the `issue_comment` event and re-run the approval worker; if passed it will allow the merge.',
                 '',
                 '_This extra step only applies to PRs opened from forks._'
               ].join('\n'),
