@@ -66,7 +66,7 @@ jobs:
                 '',
                 'Fork PR detected via pull_request_review.',
                 '',
-                'Failing the required status check to ensure that PR cannot be merged'
+                '<b style="color: red;">Failing the required status check to ensure that PR cannot be merged</b>'
               ].join('\n'),
             });
             core.setFailed('Fork PR detected via pull_request_review. Failing the required status check until a maintainer posts an approval comment to re-trigger the worker via issue_comment.');
