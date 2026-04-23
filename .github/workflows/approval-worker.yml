@@ -65,6 +65,7 @@ jobs:
                 '_Please write a comment on the PR for approval worker to work properly for fork repo PRs._'
               ].join('\n'),
             });
+            core.setFailed('Fork PR detected via pull_request_review. Failing the required status check until a maintainer posts an approval comment to re-trigger the worker via issue_comment.');
 
   check-approvals:
     runs-on: ubuntu-latest
