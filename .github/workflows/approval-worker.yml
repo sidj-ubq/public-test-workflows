@@ -73,7 +73,7 @@ jobs:
                 '_This extra step only applies to PRs opened from forks._'
               ].join('\n'),
             });
-            core.setFailed('Fork PR detected on pull_request_review event — required status check failed on purpose. Waiting for a reviewer with write access to post an approval comment so the worker can re-run via issue_comment and turn this check green.');
+            core.setFailed('Fork PR detected on pull_request_review event - required status check failed on purpose. Waiting for a reviewer with write access to post an approval comment so the worker can re-run via issue_comment and turn this check green.');
 
   check-approvals:
     runs-on: ubuntu-latest
