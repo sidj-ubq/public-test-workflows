@@ -60,16 +60,20 @@ jobs:
               repo: context.repo.repo,
               issue_number: ${{ needs.run-when-command.outputs.number }},
               body: [
-                '⚠️ **Warning:** This PR originates from a fork.',
+                '> [!WARNING]',
+                '> This pull request originates from a **fork**, so the `pull_request_review` event cannot reliably drive the approval workflow.',
                 '',
-                '_Please write a comment on the PR for approval worker to work properly for fork repo PRs._',
+                '> [!CAUTION]',
+                '> The required **Approval Check Worker** status check has been intentionally failed, and this PR **cannot be merged** until it turns green.',
                 '',
-                'Fork PR detected via pull_request_review.',
+                '### How to unblock this PR',
                 '',
-                '<b style="color: red;">Failing the required status check to ensure that PR cannot be merged</b>'
+                'A reviewer with write access must post an **approval comment** on this PR. That will trigger the `issue_comment` event and re-run the approval worker, which will then pass and allow the merge.',
+                '',
+                '_This extra step only applies to PRs opened from forks._'
               ].join('\n'),
             });
-            core.setFailed('Fork PR detected via pull_request_review. Failing the required status check until a maintainer posts an approval comment to re-trigger the worker via issue_comment.');
+            core.setFailed('Fork PR detected on pull_request_review event — required status check failed on purpose. Waiting for a reviewer with write access to post an approval comment so the worker can re-run via issue_comment and turn this check green.');
 
   check-approvals:
     runs-on: ubuntu-latest
