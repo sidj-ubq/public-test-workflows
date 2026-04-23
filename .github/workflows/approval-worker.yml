@@ -63,6 +63,7 @@ jobs:
             });
 
   check-approvals:
+    runs-on: ubuntu-latest
     if: ${{ !(github.event_name == 'pull_request_review' && github.event.pull_request.head.repo.fork == true) }}
     needs: run-when-command
     permissions:
