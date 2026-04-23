@@ -73,5 +73,5 @@ jobs:
     steps:
       - name: Check approval
         id: check-approval
-        runs: |
+        run: |
           echo "this would run if not from a fork and pull request review event"
