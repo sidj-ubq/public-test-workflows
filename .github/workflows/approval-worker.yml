@@ -1,4 +1,3 @@
-# it actually works now
 name: Approval Check Worker
 
 on:
@@ -9,9 +8,9 @@ on:
   
 permissions:
   contents: read
-  pull-requests: read
+  pull-requests: write
   issues: write
-  statuses: read
+  statuses: write
   
 jobs:
   run-when-command:
@@ -47,31 +46,20 @@ jobs:
     if: github.event_name == 'pull_request_review' && github.event.pull_request.head.repo.fork == true
     steps:
       - name: Add comment on PR
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # 8.0.0
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # 5.0.0
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: ${{ needs.run-when-command.outputs.number }},
-              body: [
-                '⚠️ **Warning:** This PR originates from a fork.',
-                '',
-                '_Please write a comment on the PR for approval worker to work properly for fork repo PRs._'
-              ].join('\n'),
-            });
+          issue-number: ${{ needs.run-when-command.outputs.number }}
+          body: |
+            ⚠️ **Warning:** This PR originates from a fork.
 
-  check-approvals:
-    if: ${{ !(github.event_name == 'pull_request_review' && github.event.pull_request.head.repo.fork == true) }}
+            _Please write a comment on the PR for this to work properly for fork repo PRs._
+
+  approval-check-worker:
+    runs-on: ubuntu-latest
     needs: run-when-command
-    permissions:
-      contents: write
-      pull-requests: write
-      statuses: write
-      issues: write
+    if: ${{ !(github.event_name == 'pull_request_review' && github.event.pull_request.head.repo.fork == true) }}
     steps:
       - name: Check approval
         id: check-approval
-        runs: |
+        run: |
           echo "this would run if not from a fork and pull request review event"
