@@ -1,45 +1,45 @@
-# .github/workflows/approval-check-commenter.yml
-name: Approval Check Commenter
+# # .github/workflows/approval-check-commenter.yml
+# name: Approval Check Commenter
 
-on:
-  workflow_run:
-    workflows: ["Approval Check Worker"]
-    types: [completed]
+# on:
+#   workflow_run:
+#     workflows: ["Approval Check Worker"]
+#     types: [completed]
 
-permissions:
-  issues: write
-  pull-requests: write
+# permissions:
+#   issues: write
+#   pull-requests: write
 
-jobs:
-  comment-on-fork-review:
-    runs-on: ubuntu-latest
-    if: >-
-      github.event.workflow_run.event == 'pull_request_review' &&
-      github.event.workflow_run.conclusion == 'failure'
-    steps:
-      - name: Post fork-PR warning comment
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # 8.0.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { owner, repo } = context.repo;
-            const sha = context.payload.workflow_run.head_sha;
+# jobs:
+#   comment-on-fork-review:
+#     runs-on: ubuntu-latest
+#     if: >-
+#       github.event.workflow_run.event == 'pull_request_review' &&
+#       github.event.workflow_run.conclusion == 'failure'
+#     steps:
+#       - name: Post fork-PR warning comment
+#         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # 8.0.0
+#         with:
+#           github-token: ${{ secrets.GITHUB_TOKEN }}
+#           script: |
+#             const { owner, repo } = context.repo;
+#             const sha = context.payload.workflow_run.head_sha;
 
-            const { data: { items: [pr] } } = await github.rest.search.issuesAndPullRequests({
-              q: `repo:${owner}/${repo} is:pr sha:${sha}`,
-            });
-            if (!pr) return core.info(`No PR found for SHA ${sha}`);
+#             const { data: { items: [pr] } } = await github.rest.search.issuesAndPullRequests({
+#               q: `repo:${owner}/${repo} is:pr sha:${sha}`,
+#             });
+#             if (!pr) return core.info(`No PR found for SHA ${sha}`);
 
-            await github.rest.issues.createComment({
-              owner,
-              repo,
-              issue_number: pr.number,
-              body: [
-                '> [!WARNING]',
-                '> This pull request originates from a **fork**. Reviews do not trigger the approval worker.',
-                '>',
-                '> Please post a comment on the PR to trigger the `issue_comment` event. If the worker runs successfully, it will allow the merge.',
-              ].join('\n'),
-            });
+#             await github.rest.issues.createComment({
+#               owner,
+#               repo,
+#               issue_number: pr.number,
+#               body: [
+#                 '> [!WARNING]',
+#                 '> This pull request originates from a **fork**. Reviews do not trigger the approval worker.',
+#                 '>',
+#                 '> Please post a comment on the PR to trigger the `issue_comment` event. If the worker runs successfully, it will allow the merge.',
+#               ].join('\n'),
+#             });
 
-            core.info(`Posted warning on PR #${pr.number}`);
+#             core.info(`Posted warning on PR #${pr.number}`);
