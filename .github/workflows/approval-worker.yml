@@ -54,7 +54,8 @@ jobs:
 
   check-approvals:
     runs-on: ubuntu-latest
-    needs: [run-when-command, check-prerequisites]
+    # needs: [run-when-command, check-prerequisites]
+    needs: check-prerequisites
     permissions:
       contents: write
       pull-requests: write
