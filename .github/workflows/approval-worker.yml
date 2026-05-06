@@ -53,18 +53,15 @@ jobs:
             core.setFailed('This action is triggered by a fork repo PR and pull_request_review event - which is why the approval check worker fails. Please add a review comment on the PR to trigger this action properly');
 
   check-approvals:
-    runs-on: ubuntu-latest
-    # needs: [run-when-command, check-prerequisites]
-    needs: check-prerequisites
+    needs: [run-when-command, check-prerequisites]
     permissions:
       contents: write
       pull-requests: write
       statuses: write
       issues: write
-    steps:
-      - name: Check approval
-        run: |
-          echo "this would run if not from a fork pull_request_review event"
-          echo "pr_number: ${{ fromJSON(needs.run-when-command.outputs.number) }}"
-          echo "pr_sha: ${{ needs.run-when-command.outputs.sha }}"
-      
+    uses: ./.github/workflows/approval-check-worker.yml
+    secrets:
+      pat_token: ${{ secrets.PAT_TOKEN }}
+    with:
+      pr_number: ${{ fromJSON(needs.run-when-command.outputs.number) }}
+      pr_sha: ${{ needs.run-when-command.outputs.sha }}
