@@ -54,7 +54,7 @@ jobs:
 
   check-approvals:
     runs-on: ubuntu-latest
-    needs: check-prerequisites
+    needs: [run-when-command, check-prerequisites]
     permissions:
       contents: write
       pull-requests: write
@@ -62,4 +62,8 @@ jobs:
       issues: write
     steps:
       - name: Check approval
-        run: echo "this would run if not from a fork pull_request_review event"
+        run: |
+          echo "this would run if not from a fork pull_request_review event"
+          echo "pr_number: ${{ fromJSON(needs.run-when-command.outputs.number) }}"
+          echo "pr_sha: ${{ needs.run-when-command.outputs.sha }}"
+      
